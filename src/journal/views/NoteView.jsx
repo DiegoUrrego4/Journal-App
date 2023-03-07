@@ -1,14 +1,20 @@
-import { SaveOutlined } from '@mui/icons-material';
-import { Button, Grid, TextField, Typography } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { SaveOutlined, UploadOutlined } from '@mui/icons-material';
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { useForm } from '../../hooks/useForm';
 import { setActiveNote, startSaveNote } from '../../store/journal';
 import { ImageGallery } from '../components';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 export const NoteView = () => {
   const dispatch = useDispatch();
-  const { active: note } = useSelector((state) => state.journal);
+  const {
+    active: note,
+    messageSaved,
+    isSaving,
+  } = useSelector((state) => state.journal);
   const { body, title, date, onInputChange, formState } = useForm(note);
 
   const dateString = useMemo(() => {
@@ -23,6 +29,20 @@ export const NoteView = () => {
   const onSaveNote = () => {
     dispatch(startSaveNote());
   };
+
+  const onFileInputChange = ({ target }) => {
+    if (target.files === 0) return;
+    console.log('Subiendo archivos');
+    // dispatch(startUploadingFiles(target.files));
+  };
+
+  const fileInputRef = useRef();
+
+  useEffect(() => {
+    if (messageSaved.length > 0) {
+      Swal.fire('Nota actualizada', messageSaved, 'success');
+    }
+  }, [messageSaved]);
 
   return (
     <Grid
@@ -39,7 +59,26 @@ export const NoteView = () => {
         </Typography>
       </Grid>
       <Grid item>
-        <Button color='primary' sx={{ padding: 2 }} onClick={onSaveNote}>
+        <input
+          type='file'
+          multiple
+          onChange={onFileInputChange}
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+        />
+        <IconButton
+          color='primary'
+          disabled={isSaving}
+          onClick={() => fileInputRef.current.click()}
+        >
+          <UploadOutlined />
+        </IconButton>
+        <Button
+          color='primary'
+          sx={{ padding: 2 }}
+          onClick={onSaveNote}
+          disabled={isSaving}
+        >
           <SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
           Guardar
         </Button>

@@ -12,7 +12,7 @@ export const startNewNote = () => {
   return async (dispatch, getState) => {
     // TODO: Tarea
     dispatch(savingNewNote());
-    const { uid } = getState().auth;
+    // const { uid } = getState().auth;
 
     const newNote = {
       title: '',
