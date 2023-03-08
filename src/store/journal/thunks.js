@@ -15,6 +15,8 @@ export const startNewNote = () => {
   return async (dispatch, getState) => {
     dispatch(savingNewNote());
 
+    const { uid } = getState().auth;
+
     const newNote = {
       title: '',
       body: '',
