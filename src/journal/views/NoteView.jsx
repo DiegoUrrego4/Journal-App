@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SaveOutlined, UploadOutlined } from '@mui/icons-material';
+import {
+  DeleteOutline,
+  SaveOutlined,
+  UploadOutlined,
+} from '@mui/icons-material';
 import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { useForm } from '../../hooks/useForm';
 import {
   setActiveNote,
+  startDeletingNote,
   startSaveNote,
   startUploadingFiles,
 } from '../../store/journal';
@@ -40,6 +45,10 @@ export const NoteView = () => {
   };
 
   const fileInputRef = useRef();
+
+  const onDeleteNote = () => { 
+    dispatch(startDeletingNote())
+   }
 
   useEffect(() => {
     if (messageSaved.length > 0) {
@@ -110,6 +119,14 @@ export const NoteView = () => {
           onChange={onInputChange}
         />
       </Grid>
+
+      <Grid container justifyContent='end'>
+        <Button onClick={onDeleteNote} sx={{ mt: 2 }} color='error'>
+          <DeleteOutline />
+          Borrar
+        </Button>
+      </Grid>
+
       {/* Image Gallery */}
       <ImageGallery images={note.imageUrls} />
     </Grid>
